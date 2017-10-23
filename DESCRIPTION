@@ -1,7 +1,7 @@
 Package: chessbase
 Title: A Database of Chess Opening Sequences
 Version: 0.0.2.71828
-Authors@R: c(person("Cody", "Ross", email = "cody_ross@eva.mpg.de", role = c("aut", "cre")) , person("Bret", "Beheim", email = "bret_beheim@eva.mpg.de", role = c("aut", "cre")))
+Authors@R: c(person("Cody", "Ross", email = "cody_ross@eva.mpg.de", role = c("aut", "cre")) , person("Bret", "Beheim", email = "bret_beheim@eva.mpg.de", role = c("cre")))
 Description: This package provides a cleaned version of the MillionBase 2.2 database of Chess games published by Ed Schroder.
 Depends: R (>= 3.3.2)
 License: Creative Commons.
