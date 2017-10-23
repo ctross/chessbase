@@ -3,8 +3,10 @@ An R database of 1.12 million chess opening sequences: A 43-year time-series of 
 
 # Install with
 library(devtools)
+
 install_github("ctross/chessbase")
 
 # Explore
 library(chessbase)
+
 head(chessdata)
