@@ -1,6 +1,6 @@
 
-\name{diffuse}
-\alias{diffuse}
+\name{chessbase}
+\alias{chessbase}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{chessbase}
 \description{
