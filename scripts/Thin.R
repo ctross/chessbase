@@ -30,7 +30,7 @@ R <- data.frame(GameID=R$hash_id,
 Players <- c(as.character(R$White),as.character(R$Black))
 Elos <- c(R$WhiteElo,R$BlackElo)
 
-EloFreq <- tapply(Elos,Players,function(z) mean(is.na(z)))
+EloFreq <- tapply(Elos,Players,function(z) mean(!is.na(z)))
 
 unratedPlayers <- names(EloFreq)[which(EloFreq==0)]
 
@@ -38,8 +38,8 @@ Drop1a <- which(R$White %in% unratedPlayers)
 Drop1b <- which(R$Black %in% unratedPlayers)
 
 Drop1 <- unique(c(Drop1a, Drop1b))
-length(Drop1)         # Drops 769671 games
-length(Drop1)/nrow(R) # thats 0.35 of games
+length(Drop1)         # Drops 809456 games
+length(Drop1)/nrow(R) # thats 0.37 of games
 
 R<-R[-Drop1,]
 
@@ -60,25 +60,25 @@ n.games.black.wins <- tapply(R$Lose, R$Year, sum)
 n.games.drawn <- tapply(R$Draw, R$Year, sum)
 
 
-plot(as.numeric(as.character(year.list)), as.numeric(n.games.white.wins/n.games.yr), type="n", lwd=3,col="gray", ylim=c(0,1),ylab="Frequency",xlab="Year")
+plot(as.numeric(as.character(year.list)), na.omit(as.numeric(n.games.white.wins/n.games.yr)), type="n", lwd=3,col="gray", ylim=c(0,1),ylab="Frequency",xlab="Year")
 abline(h=0.2,lty=3,col="grey80")
 abline(h=0.4,lty=3,col="grey80")
 abline(h=0.6,lty=3,col="grey80")
 abline(h=0.3,lty=3,col="grey80")
 abline(h=0.5,lty=3,col="grey80")
-points(as.numeric(as.character(year.list)), n.games.white.wins/n.games.yr, type="l",col="gray",lwd=3)
-points(as.numeric(as.character(year.list)), n.games.black.wins/n.games.yr, type="l",lwd=3)
-points(as.numeric(as.character(year.list)), n.games.drawn/n.games.yr, type="l",lwd=3, col="indianred")
+points(as.numeric(as.character(year.list)), na.omit(as.numeric(n.games.white.wins/n.games.yr)), type="l",col="gray",lwd=3)
+points(as.numeric(as.character(year.list)), na.omit(as.numeric(n.games.black.wins/n.games.yr)), type="l",lwd=3)
+points(as.numeric(as.character(year.list)), na.omit(as.numeric(n.games.drawn/n.games.yr)), type="l",lwd=3, col="indianred")
 
 # Frequency of wins, draws, and losses seems to stabilize around 1970
 R$Year <- as.numeric(as.character(R$Year))
 R$Month <- as.numeric(as.character(R$Month))
 Drop2 <- which(R$Year<1971)
-length(Drop2)     # Drops 139808 games
-length(Drop2)/nrow(R) # thats a little under 0.10 of games
+length(Drop2)     # Drops 24553 games
+length(Drop2)/nrow(R) # thats a little under 0.02 of games
 R<-R[-Drop2,]
 dim(R)
-# thinned database now has 1287260 games
+# thinned database now has 1362730 games
 
 
 # Finally, drop records of games by white in which the name appears less than 5 times, since these might often be due to misspellings of name
@@ -104,7 +104,7 @@ for(i in 1:length(PeepsWithoutEnough)){
 
 
 Keep <- which(R$White %in% PeepsWithEnough)
-length(n_games_as_white )-length(Keep)     # Drops 163263 games
+length(R$White)-length(Keep)     # Drops 51273 games
 
 R <- data.frame(GameID=R$GameID[Keep],
                 Year=R$Year[Keep],
@@ -151,27 +151,17 @@ for(i in 1:length(player_list)){
 }
 
 plot(career_pace_stddev~career_games,log="x")
-player_list[which(career_pace_stddev>13)]
+player_list[which(career_pace_stddev>14)]
 
 set.seed(1)
-samps<-sample(player_list[which(career_pace_stddev>13)],34)   # Sample 20 percent
+samps<-sample(player_list[which(career_pace_stddev>14)],34)   # Sample 20 percent
 
 Rcheck <- R[which(R$White %in% samps),1:9]
 Rcheck <- Rcheck[order(Rcheck$White, Rcheck$Year),]
 
-#################################### Results of spot check: 1=OK, 0=Error
-# "AnelliA" 1      "BoehnischM" 1   "BrownT"  0      "ClausenMartin" 0  "CoatesK" 1      "DillJ" 0        "DommesV" 1      "DonohueT" 0     "FelserF" 1
-# "FrotscherT" NA   "GanzaK" 0       "HabershonP" 1   "HammG" NA        "HeinR"  NA       "HenttinenM" 1   "HoenR" 1        "IlijicM" 1      "IvarssonS" 1
-# "KleinK" 0       "KurtovicV" NA    "MacPhailJ" 1    "MeckingH" 1     "MuellerUsingD" NA "MyagmarsurenL" 1 "NegriS" 1       "PerrenetJacob" 1 "PickardC" 0
-# "PostlerR" 1     "RukavinaJ" 1    "SolmundarsonM" 1 "StigarP"  1     "ThorJ"  1       "WaltherD"  NA    "WeinbergerT" 1
 
-# Collision rate of 0.25 in the most suspiscious subset of data, almost all of these come from players with few games that will be dropped in downstream analysis anyway
-# To be on the safe side, we drop those players with SD>13 andngames <50
-
-
-
-Keep <- !R$White %in% player_list[which(career_pace_stddev>13 & career_games<50 )]
-length(R$White )-sum(Keep)     # Drops 2097 games
+Keep <- !R$White %in% player_list[which(career_pace_stddev>14 & career_games<50 )]
+length(R$White )-sum(Keep)     # Drops 1037 games
 
 R <- data.frame(GameID=R$GameID[Keep],
                 Year=R$Year[Keep],
